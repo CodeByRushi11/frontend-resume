@@ -1,0 +1,53 @@
+.header {
+  background: #5a2d82;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.username {
+  font-weight: bold;
+}
+.notification {
+  color: white;
+}
+.contactForm {
+  padding: 10px;
+}
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  background: #cab5b5;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nav-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+.padd-left {
+  padding-left: 20px;
+}

@@ -1,0 +1,438 @@
+// WallClockUI.scss
+.wall-clock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background-attachment: fixed;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 80%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+  }
+}
+
+// Clock mounting system
+.clock-mount {
+  position: relative;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: -10px;
+  z-index: 10;
+
+  .mount-top {
+    width: 60px;
+    height: 25px;
+    background: linear-gradient(135deg, #8b4513, #a0522d, #8b4513);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 15px;
+      background: inherit;
+      border-radius: 0 0 5px 5px;
+    }
+  }
+
+  .mount-chain {
+    width: 4px;
+    height: 50px;
+    background: linear-gradient(to bottom, #d2691e, #8b4513, #d2691e);
+    position: relative;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #d2691e;
+      border-radius: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &::before {
+      top: -4px;
+    }
+    &::after {
+      bottom: -4px;
+    }
+  }
+}
+
+// Main clock body
+.clock-body {
+  perspective: 1000px;
+}
+
+.clock-frame {
+  width: 350px;
+  height: 350px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: rotateX(5deg) rotateY(5deg);
+  }
+}
+
+.clock-face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 20px solid #8b4513;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #f5f5dc 0%, #deb887 100%),
+    repeating-radial-gradient(
+      circle at 30% 30%,
+      rgba(139, 69, 19, 0.1) 0px,
+      rgba(139, 69, 19, 0.1) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.2), 0 0 0 5px #a0522d,
+    0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 60px rgba(139, 69, 19, 0.3);
+
+  // Bevel effect
+  &::before {
+    content: "";
+    position: absolute;
+    top: -25px;
+    left: -25px;
+    right: -25px;
+    bottom: -25px;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      rgba(245, 222, 179, 0.8) 0%,
+      rgba(160, 82, 45, 0.6) 50%,
+      rgba(139, 69, 19, 0.8) 100%
+    );
+    z-index: -1;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3),
+      0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Hour markers
+.hour-marker {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 20px;
+  background: #8b4513;
+  transform-origin: bottom center;
+  margin-left: -2px;
+
+  &.marker-3,
+  &.marker-6,
+  &.marker-9,
+  &.marker-12 {
+    height: 25px;
+    width: 6px;
+    background: #5d4037;
+    margin-left: -3px;
+  }
+
+  @for $i from 1 through 12 {
+    &.marker-#{$i} {
+      transform: rotate(#{$i * 30}deg);
+    }
+  }
+
+  .hour-number {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) rotate(calc(-1 * var(--rotation)));
+    font-size: 24px;
+    font-weight: bold;
+    color: #5d4037;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    font-family: "Times New Roman", serif;
+  }
+}
+
+// Minute markers
+.minute-marker {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 2px;
+  height: 8px;
+  background: #a0522d;
+  transform-origin: bottom center;
+  margin-left: -1px;
+
+  &.major {
+    height: 12px;
+    width: 3px;
+    background: #8b4513;
+    margin-left: -1.5px;
+  }
+}
+
+// Hands container
+.hands-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  border-radius: 10px 10px 5px 5px;
+  z-index: 10;
+  transition: transform 0.2s cubic-bezier(0.4, 2.3, 0.8, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  &::before {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: inherit;
+  }
+}
+
+.hour-hand {
+  width: 10px;
+  height: 90px;
+  margin-left: -5px;
+  background: linear-gradient(to top, #2c3e50, #34495e, #2c3e50);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.4);
+
+  &::before {
+    content: "";
+    top: -15px;
+    left: -3px;
+    right: -3px;
+    height: 20px;
+    background: inherit;
+    border-radius: 8px 8px 3px 3px;
+  }
+}
+
+.minute-hand {
+  width: 6px;
+  height: 130px;
+  margin-left: -3px;
+  background: linear-gradient(to top, #2c3e50, #34495e, #2c3e50);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.4);
+
+  &::before {
+    content: "";
+    top: -12px;
+    left: -2px;
+    right: -2px;
+    height: 16px;
+    background: inherit;
+    border-radius: 6px 6px 2px 2px;
+  }
+}
+
+.second-hand {
+  width: 2px;
+  height: 140px;
+  margin-left: -1px;
+  background: linear-gradient(
+    to top,
+    transparent 30%,
+    #e74c3c 30%,
+    #c0392b 100%
+  );
+  box-shadow: 0 0 5px rgba(231, 76, 60, 0.8);
+  z-index: 11;
+
+  &::before {
+    content: "";
+    top: -20px;
+    left: -3px;
+    right: -3px;
+    height: 25px;
+    background: #c0392b;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: -4px;
+    right: -4px;
+    height: 20px;
+    background: #c0392b;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.6);
+  }
+}
+
+// Center assembly
+.center-assembly {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+
+  .center-nut {
+    width: 25px;
+    height: 25px;
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d, #95a5a6);
+    border-radius: 50%;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .center-cap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #bdc3c7, #95a5a6, #bdc3c7);
+    border-radius: 50%;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5),
+      0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .center-pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: #e74c3c;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.8);
+  }
+}
+
+// Brand logo
+.brand-logo {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: "Georgia", serif;
+  color: #5d4037;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+
+  span {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+
+    &:first-child {
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+  }
+}
+
+// Digital display
+.digital-display {
+  margin-top: 40px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px 30px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.date-display {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.time-display {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  letter-spacing: 3px;
+  font-family: "Courier New", monospace;
+}
+
+// Add CSS variables for hour numbers
+@for $i from 1 through 12 {
+  .marker-#{$i} {
+    --rotation: #{$i * 30}deg;
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .clock-frame {
+    width: 280px;
+    height: 280px;
+  }
+
+  .clock-face {
+    border-width: 15px;
+  }
+
+  .hour-hand {
+    height: 70px;
+  }
+  .minute-hand {
+    height: 100px;
+  }
+  .second-hand {
+    height: 110px;
+  }
+
+  .time-display {
+    font-size: 2rem;
+  }
+
+  .date-display {
+    font-size: 1rem;
+  }
+}

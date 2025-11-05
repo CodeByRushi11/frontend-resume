@@ -1,0 +1,31 @@
+.loader,
+.noData {
+  position: absolute;
+  top: 47%;
+  left: 47%;
+}
+.productCardSingle {
+  box-shadow: 0px 0px 9px #99a4c1;
+}
+.productCards {
+  height: 70vh !important;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.productCards.expanded {
+  height: auto !important;
+}
+
+.showMoreButton {
+  position: absolute;
+  bottom: -4px; /* Adjust as needed */
+  right: 0px; /* Position to bottom right */
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  color: #1500ff; /* Set dot color */
+  font-size: 20px; /* Adjust size of dots */
+  cursor: pointer;
+  padding: 5px;
+}

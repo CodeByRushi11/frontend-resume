@@ -1,0 +1,440 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "rushikeshingole467@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "2",
+      "email": "john.doe@example.com",
+      "password": "password123"
+    },
+    {
+      "id": "3",
+      "email": "jane.smith@example.com",
+      "password": "qwerty789"
+    },
+    {
+      "id": "4",
+      "email": "alex.jones@example.com",
+      "password": "testpass456"
+    },
+    {
+      "id": "5",
+      "email": "lisa.williams@example.com",
+      "password": "lisa2024"
+    },
+    {
+      "id": "6",
+      "email": "mike.brown@example.com",
+      "password": "brownie88"
+    },
+    {
+      "id": "7",
+      "email": "emma.taylor@example.com",
+      "password": "securepass"
+    },
+    {
+      "id": "8",
+      "email": "david.clark@example.com",
+      "password": "admin123"
+    },
+    {
+      "id": "9",
+      "email": "sophia.miller@example.com",
+      "password": "sophia999"
+    },
+    {
+      "id": "10",
+      "email": "daniel.lee@example.com",
+      "password": "lee45678"
+    },
+    {
+      "0": {
+        "id": "1",
+        "email": "rushikeshingole467@gmail.com",
+        "password": "12345678"
+      },
+      "1": {
+        "id": "2",
+        "email": "john.doe@example.com",
+        "password": "password123"
+      },
+      "2": {
+        "id": "3",
+        "email": "jane.smith@example.com",
+        "password": "qwerty789"
+      },
+      "3": {
+        "id": "4",
+        "email": "alex.jones@example.com",
+        "password": "testpass456"
+      },
+      "4": {
+        "id": "5",
+        "email": "lisa.williams@example.com",
+        "password": "lisa2024"
+      },
+      "5": {
+        "id": "6",
+        "email": "mike.brown@example.com",
+        "password": "brownie88"
+      },
+      "6": {
+        "id": "7",
+        "email": "emma.taylor@example.com",
+        "password": "securepass"
+      },
+      "7": {
+        "id": "8",
+        "email": "david.clark@example.com",
+        "password": "admin123"
+      },
+      "8": {
+        "id": "9",
+        "email": "sophia.miller@example.com",
+        "password": "sophia999"
+      },
+      "9": {
+        "id": "10",
+        "email": "daniel.lee@example.com",
+        "password": "lee45678"
+      },
+      "id": "ed48"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "173b",
+      "name": "Learn Server and create Api and Create db "
+    },
+    {
+      "id": "803e",
+      "name": "Practice all File And write File in my own hand s both copy and Vs code"
+    },
+    {
+      "id": "7515",
+      "name": "add task "
+    },
+    {
+      "id": "7fb6",
+      "name": "add"
+    },
+    {
+      "id": "7b0a",
+      "name": "add task"
+    },
+    {
+      "id": "54e6",
+      "name": "add"
+    },
+    {
+      "id": "0320",
+      "name": "add"
+    },
+    {
+      "id": "d30d",
+      "name": "addd"
+    }
+  ],
+  "resumes": [
+    {
+      "name": "John Doe",
+      "title": "Full Stack Developer",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "photo": "https://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG.png",
+      "summary": "Experienced developer...",
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "country": "USA"
+      },
+      "languages": [
+        "English",
+        "Spanish"
+      ],
+      "skills": [
+        "JavaScript",
+        "React",
+        "Node.js"
+      ],
+      "links": {
+        "linkedin": "https://linkedin.com/in/johndoe",
+        "github": "https://github.com/johndoe",
+        "website": "https://johndoe.dev"
+      },
+      "experience": [
+        {
+          "job_title": "Software Engineer",
+          "company": "Tech Corp",
+          "start_date": "2021-01-01",
+          "end_date": "2023-01-01",
+          "description": "Worked on..."
+        }
+      ],
+      "projects": [
+        {
+          "name": "Inventory System",
+          "description": "Built a full-stack inventory management system."
+        }
+      ],
+      "id": "6872"
+    },
+    {
+      "id": "c46f",
+      "title": "FrontEnd Developmenet",
+      "name": "Rushikesh Ingole",
+      "email": "rushikeshingole467@gmail.com",
+      "phone": "",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "language": [],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "c20e",
+      "title": "FrontEnd Developmenet",
+      "name": "Rushikesh Ingole",
+      "email": "rushikeshingole467@gmail.com",
+      "phone": "",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "language": [],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "69ea",
+      "title": "tt",
+      "name": "tt",
+      "email": "ttttt",
+      "phone": "",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "language": [],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "9fe0",
+      "title": "FrontEnd Development ",
+      "name": "eee",
+      "email": "eee",
+      "phone": "",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "languages": [],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "6d89",
+      "photo": "",
+      "title": "eeeeeeeeeee",
+      "name": "",
+      "email": "w",
+      "phone": "w",
+      "location": {
+        "city": "w",
+        "state": "w",
+        "country": ""
+      },
+      "language": [],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "9323",
+      "photo": "",
+      "title": "32E23E",
+      "name": "",
+      "email": "E2",
+      "phone": "E23E",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "languages": [
+        "HINDI"
+      ],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "252a",
+      "photo": "",
+      "title": "AAAAAAAAAAAAAAA",
+      "name": "",
+      "email": "",
+      "phone": "",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "languages": [
+        "ENGLISH"
+      ],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "08ea",
+      "photo": "",
+      "title": "sssssssssssss",
+      "name": "",
+      "email": "sssssssssssssss",
+      "phone": "",
+      "location": {
+        "city": "",
+        "state": "",
+        "country": ""
+      },
+      "languages": [],
+      "skills": [],
+      "linkedin": "",
+      "github": "",
+      "website": "",
+      "summary": "",
+      "experience": [],
+      "projects": []
+    },
+    {
+      "id": "6bed",
+      "name": "John Doe",
+      "title": "Full Stack Developer (copy)",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "photo": "https://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG.png",
+      "summary": "Experienced developer...",
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "country": "USA"
+      },
+      "languages": [
+        "English",
+        "Spanish"
+      ],
+      "skills": [
+        "JavaScript",
+        "React",
+        "Node.js"
+      ],
+      "links": {
+        "linkedin": "https://linkedin.com/in/johndoe",
+        "github": "https://github.com/johndoe",
+        "website": "https://johndoe.dev"
+      },
+      "experience": [
+        {
+          "job_title": "Software Engineer",
+          "company": "Tech Corp",
+          "start_date": "2021-01-01",
+          "end_date": "2023-01-01",
+          "description": "Worked on..."
+        }
+      ],
+      "projects": [
+        {
+          "name": "Inventory System",
+          "description": "Built a full-stack inventory management system."
+        }
+      ]
+    },
+    {
+      "id": "e511",
+      "name": "John Doe",
+      "title": "Full Stack Developer (copy)",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "photo": "https://www.pngall.com/wp-content/uploads/5/Profile-Male-PNG.png",
+      "summary": "Experienced developer...",
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "country": "USA"
+      },
+      "languages": [
+        "English",
+        "Spanish"
+      ],
+      "skills": [
+        "JavaScript",
+        "React",
+        "Node.js"
+      ],
+      "links": {
+        "linkedin": "https://linkedin.com/in/johndoe",
+        "github": "https://github.com/johndoe",
+        "website": "https://johndoe.dev"
+      },
+      "experience": [
+        {
+          "job_title": "Software Engineer",
+          "company": "Tech Corp",
+          "start_date": "2021-01-01",
+          "end_date": "2023-01-01",
+          "description": "Worked on..."
+        }
+      ],
+      "projects": [
+        {
+          "name": "Inventory System",
+          "description": "Built a full-stack inventory management system."
+        }
+      ]
+    }
+  ]
+}
