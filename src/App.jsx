@@ -29,7 +29,7 @@ import ReactPractice from "./StudyComponent/ReactPractice.jsx";
 import { Button } from "reactstrap";
 import WallClockUI from "./Component/WallClockUI.jsx";
 import TechnoUi from "./Component/TechnoUi.jsx";
-import AboutUs from "./Component/AboutUs.Jsx";
+import AboutUs from "./Component/AboutUs.jsx";
 import AxiosApi from "./Component/AxiosApi.jsx";
 
 const App = () => {
