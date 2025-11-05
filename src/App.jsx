@@ -26,7 +26,7 @@ import ResumeComponent from "./Component/resumeComponent.jsx";
 import API_Integration from "./Component/API_Integration.jsx";
 import ResgistrationForm from "./Component/ResgistrationForm.jsx";
 import ReactPractice from "./StudyComponent/ReactPractice.jsx";
-import { Button } from "reactstrap";
+
 import WallClockUI from "./Component/WallClockUI.jsx";
 import TechnoUi from "./Component/TechnoUi.jsx";
 import AboutUs from "./Component/AboutUs.jsx";

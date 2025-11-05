@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteTask, fetchTasks, addTask } from "../Redux/Features/taskSlicer";
 import { addToast } from "../Redux/Features/toastSlice"; // Import toast action
 import ToastComponent from "./ToastComponent"; // Import toast component
-import "./taskList.scss"; // Import the SCSS file
+import "./TaskList.scss"; // Import the SCSS file
 
 const TaskList = () => {
   const dispatch = useDispatch();
