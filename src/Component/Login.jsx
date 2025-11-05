@@ -67,7 +67,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../Redux/Features/authSlice";
 import { addToast } from "../Redux/Features/toastSlice"; // Import toast action
 import ToastComponent from "./ToastComponent"; // Import toast component
-import "./login.scss";
+import "./Login.scss";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
