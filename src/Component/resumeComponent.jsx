@@ -13,6 +13,7 @@ import {
   Spinner,
   Table,
   FormFeedback,
+  FormGroup,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
 import { addToast } from "../Redux/Features/toastSlice";
@@ -23,14 +24,17 @@ const ResumeComponent = () => {
   const [resumeData, setResumeData] = useState([]);
   const [toggleAddResume, setToggleAddResume] = useState(false);
   const [selectedResume, setSelectedResume] = useState(null);
+  const [selectedResumes, setSelectedResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteMultipleModal, setDeleteMultipleModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [newLanguageInput, setNewLanguageInput] = useState("");
   const [newSkillInput, setNewSkillInput] = useState("");
   const [errors, setErrors] = useState({});
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectAll, setSelectAll] = useState(false);
 
   const [newExperience, setNewExperience] = useState({
     company: "",
@@ -63,7 +67,8 @@ const ResumeComponent = () => {
   });
 
   const dispatch = useDispatch();
-  const api_url = "http://localhost:3000/resumes";
+
+  const api_url = `https://backend-resume-mghz.onrender.com/resumes`;
 
   const toogleResume = () => {
     setToggleAddResume(!toggleAddResume);
@@ -83,19 +88,42 @@ const ResumeComponent = () => {
     }
   }, [resumeData]);
 
+  useEffect(() => {
+    if (resumeData.length > 0) {
+      setSelectAll(selectedResumes.length === resumeData.length);
+    }
+  }, [selectedResumes, resumeData]);
+
+  // ✅ ENHANCED: Better error handling and logging
   const FetchResumeData = async () => {
     setLoading(true);
     try {
+      console.log("🌐 Fetching resumes from:", api_url);
+
       const response = await fetch(api_url, {
         method: "GET",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       });
+
+      if (!response.ok) {
+        throw new Error(
+          `Server error: ${response.status} ${response.statusText}`
+        );
+      }
+
       const json = await response.json();
+      console.log("✅ Resumes loaded:", json.length);
       setResumeData(json);
     } catch (error) {
-      console.error("Error Fetching Resume data", error);
+      console.error("❌ Error fetching resume data:", error);
+      dispatch(
+        addToast({
+          message: `Failed to load resumes: ${error.message}`,
+          type: "error",
+        })
+      );
       setResumeData([]);
     } finally {
       setLoading(false);
@@ -182,7 +210,6 @@ const ResumeComponent = () => {
     setErrorModal(true);
   };
 
-  // Fixed: Proper state updates for all input fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewSaveResume((prev) => ({
@@ -222,7 +249,6 @@ const ResumeComponent = () => {
     }));
   };
 
-  // Fixed: Update existing experience in the list
   const handleUpdateExperience = (index, field, value) => {
     setNewSaveResume((prev) => {
       const updatedExperience = [...prev.experience];
@@ -237,7 +263,6 @@ const ResumeComponent = () => {
     });
   };
 
-  // Fixed: Update existing project in the list
   const handleUpdateProject = (index, field, value) => {
     setNewSaveResume((prev) => {
       const updatedProjects = [...prev.projects];
@@ -252,7 +277,6 @@ const ResumeComponent = () => {
     });
   };
 
-  // Fixed: Update existing language in the list
   const handleUpdateLanguage = (index, value) => {
     setNewSaveResume((prev) => {
       const updatedLanguages = [...prev.languages];
@@ -264,7 +288,6 @@ const ResumeComponent = () => {
     });
   };
 
-  // Fixed: Update existing skill in the list
   const handleUpdateSkill = (index, value) => {
     setNewSaveResume((prev) => {
       const updatedSkills = [...prev.skills];
@@ -277,7 +300,6 @@ const ResumeComponent = () => {
   };
 
   const handleAddExperience = () => {
-    // Validate current experience
     if (
       !newExperience.company?.trim() ||
       !newExperience.job_title?.trim() ||
@@ -294,7 +316,6 @@ const ResumeComponent = () => {
       experience: [...prev.experience, { ...newExperience }],
     }));
 
-    // Reset form
     setNewExperience({
       company: "",
       job_title: "",
@@ -312,7 +333,6 @@ const ResumeComponent = () => {
   };
 
   const handleAddProject = () => {
-    // Validate current project
     if (!newProject.name?.trim()) {
       showErrorModal("Project name is required");
       return;
@@ -323,7 +343,6 @@ const ResumeComponent = () => {
       projects: [...prev.projects, { ...newProject }],
     }));
 
-    // Reset form
     setNewProject({
       name: "",
       description: "",
@@ -337,6 +356,7 @@ const ResumeComponent = () => {
     }));
   };
 
+  // ✅ ENHANCED: Better error handling for API calls
   const handleSaveResume = async () => {
     if (!validateForm()) {
       showErrorModal("Please fill all required fields correctly");
@@ -344,6 +364,8 @@ const ResumeComponent = () => {
     }
 
     try {
+      console.log("💾 Saving resume to:", api_url);
+
       const response = await fetch(api_url, {
         method: "POST",
         headers: {
@@ -351,8 +373,10 @@ const ResumeComponent = () => {
         },
         body: JSON.stringify(newSaveResume),
       });
+
       if (response.ok) {
         const savedResume = await response.json();
+        console.log("✅ Resume saved successfully:", savedResume._id);
         setResumeData([...resumeData, savedResume]);
         setSelectedResume(savedResume);
         setToggleAddResume(false);
@@ -361,12 +385,20 @@ const ResumeComponent = () => {
           addToast({ message: "Resume added successfully", type: "success" })
         );
       } else {
-        const errorData = await response.json();
-        showErrorModal(errorData.message || "Failed to save resume");
+        const errorText = await response.text();
+        let errorMessage = "Failed to save resume";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${response.status}`;
+        }
+        console.error("❌ Save error:", errorMessage);
+        showErrorModal(errorMessage);
       }
     } catch (error) {
-      console.error("Error on saving resume", error);
-      showErrorModal("Error saving resume");
+      console.error("❌ Network error saving resume:", error);
+      showErrorModal("Network error: Unable to connect to server");
     }
   };
 
@@ -390,6 +422,7 @@ const ResumeComponent = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newSaveResume),
       });
+
       if (response.ok) {
         const updatedResume = await response.json();
         setResumeData((prevData) =>
@@ -407,12 +440,19 @@ const ResumeComponent = () => {
           })
         );
       } else {
-        const errorData = await response.json();
-        showErrorModal(errorData.message || "Failed to update resume");
+        const errorText = await response.text();
+        let errorMessage = "Failed to update resume";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${response.status}`;
+        }
+        showErrorModal(errorMessage);
       }
     } catch (error) {
-      console.error("Error updating resume:", error);
-      showErrorModal("Error updating resume");
+      console.error("❌ Error updating resume:", error);
+      showErrorModal("Network error: Unable to connect to server");
     }
   };
 
@@ -443,30 +483,115 @@ const ResumeComponent = () => {
         setResumeData(
           resumeData.filter((resume) => resume._id !== selectedResume._id)
         );
+        setSelectedResumes(
+          selectedResumes.filter((id) => id !== selectedResume._id)
+        );
         setSelectedResume(resumeData.length > 1 ? resumeData[0] : null);
         dispatch(
           addToast({ message: "Resume deleted successfully", type: "delete" })
         );
       } else {
-        const errorData = await response.json();
-        showErrorModal(errorData.message || "Failed to delete resume");
+        const errorText = await response.text();
+        let errorMessage = "Failed to delete resume";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${response.status}`;
+        }
+        showErrorModal(errorMessage);
       }
     } catch (error) {
-      console.error("Error deleting resume", error);
-      showErrorModal("Error deleting resume");
+      console.error("❌ Error deleting resume", error);
+      showErrorModal("Network error: Unable to connect to server");
+    }
+  };
+
+  const handleSelectResume = (resumeId) => {
+    setSelectedResumes((prev) => {
+      if (prev.includes(resumeId)) {
+        return prev.filter((id) => id !== resumeId);
+      } else {
+        return [...prev, resumeId];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedResumes([]);
+    } else {
+      setSelectedResumes(resumeData.map((resume) => resume._id));
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const confirmDeleteMultiple = () => {
+    if (selectedResumes.length === 0) {
+      showErrorModal("Please select at least one resume to delete");
+      return;
+    }
+    setDeleteMultipleModal(true);
+  };
+
+  const handleDeleteMultipleResumes = async () => {
+    setDeleteMultipleModal(false);
+
+    try {
+      const deletePromises = selectedResumes.map((resumeId) =>
+        fetch(`${api_url}/${resumeId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+      );
+
+      const results = await Promise.allSettled(deletePromises);
+
+      const allSuccessful = results.every(
+        (result) => result.status === "fulfilled" && result.value.ok
+      );
+
+      if (allSuccessful) {
+        setResumeData((prev) =>
+          prev.filter((resume) => !selectedResumes.includes(resume._id))
+        );
+
+        setSelectedResumes([]);
+
+        if (selectedResume && selectedResumes.includes(selectedResume._id)) {
+          const remainingResumes = resumeData.filter(
+            (resume) => !selectedResumes.includes(resume._id)
+          );
+          setSelectedResume(
+            remainingResumes.length > 0 ? remainingResumes[0] : null
+          );
+        }
+
+        dispatch(
+          addToast({
+            message: `${selectedResumes.length} resume(s) deleted successfully`,
+            type: "delete",
+          })
+        );
+      } else {
+        showErrorModal("Some resumes could not be deleted. Please try again.");
+      }
+    } catch (error) {
+      console.error("❌ Error deleting resumes", error);
+      showErrorModal("Network error: Unable to connect to server");
     }
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         showErrorModal("Please upload an image file");
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         showErrorModal("Image size should be less than 5MB");
         return;
@@ -543,12 +668,19 @@ const ResumeComponent = () => {
           addToast({ message: "Resume copied successfully", type: "success" })
         );
       } else {
-        const errorData = await response.json();
-        showErrorModal(errorData.message || "Failed to copy resume");
+        const errorText = await response.text();
+        let errorMessage = "Failed to copy resume";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `Server error: ${response.status}`;
+        }
+        showErrorModal(errorMessage);
       }
     } catch (error) {
-      console.error("Error copying resume:", error);
-      showErrorModal("Error copying resume");
+      console.error("❌ Error copying resume:", error);
+      showErrorModal("Network error: Unable to connect to server");
     }
   };
 
@@ -559,8 +691,24 @@ const ResumeComponent = () => {
       <Row className="ResumeHead">
         <Col md={6}>
           <h2>Resume Management</h2>
+          {selectedResumes.length > 0 && (
+            <div className="selection-info">
+              <span className="selected-count">
+                {selectedResumes.length} resume(s) selected
+              </span>
+            </div>
+          )}
         </Col>
         <Col md={6} style={{ textAlign: "end" }}>
+          {selectedResumes.length > 0 && (
+            <Button
+              color="danger"
+              style={{ margin: "0px 5px" }}
+              onClick={confirmDeleteMultiple}
+            >
+              Delete Selected ({selectedResumes.length})
+            </Button>
+          )}
           <Button color="primary" onClick={toogleResume}>
             Add Resume
           </Button>
@@ -569,14 +717,26 @@ const ResumeComponent = () => {
 
       <div className="loadingCSS">
         {loading ? (
-          <Spinner className="loading" size="lg" color="info" type="grow" />
+          <div className="text-center py-5">
+            <Spinner className="loading" size="lg" color="info" type="grow" />
+            <p className="mt-2">Loading resumes from server...</p>
+          </div>
         ) : (
           <Row>
             <Col md={4}>
               <Table className="table-sticky">
                 <thead>
                   <tr>
-                    <th>Resume List</th>
+                    <th style={{ width: "50px" }}>
+                      <FormGroup check>
+                        <Input
+                          type="checkbox"
+                          checked={selectAll}
+                          onChange={handleSelectAll}
+                        />
+                      </FormGroup>
+                    </th>
+                    <th>Resume List ({resumeData.length})</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -589,6 +749,18 @@ const ResumeComponent = () => {
                       }
                       style={{ cursor: "pointer" }}
                     >
+                      <td
+                        style={{ width: "50px" }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FormGroup check>
+                          <Input
+                            type="checkbox"
+                            checked={selectedResumes.includes(resume._id)}
+                            onChange={() => handleSelectResume(resume._id)}
+                          />
+                        </FormGroup>
+                      </td>
                       <td>{resume.title}</td>
                     </tr>
                   ))}
@@ -677,30 +849,36 @@ const ResumeComponent = () => {
                       </div>
                       <div className="resumeMiniContainer">
                         <h6>Links</h6>
-                        <a
-                          href={selectedResume.linkedin}
-                          className="linkWeb"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Linkedin
-                        </a>
-                        <a
-                          href={selectedResume.github}
-                          className="linkWeb"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Github
-                        </a>
-                        <a
-                          href={selectedResume.website}
-                          className="linkWeb"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Website
-                        </a>
+                        {selectedResume.linkedin && (
+                          <a
+                            href={selectedResume.linkedin}
+                            className="linkWeb"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            LinkedIn
+                          </a>
+                        )}
+                        {selectedResume.github && (
+                          <a
+                            href={selectedResume.github}
+                            className="linkWeb"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            GitHub
+                          </a>
+                        )}
+                        {selectedResume.website && (
+                          <a
+                            href={selectedResume.website}
+                            className="linkWeb"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Website
+                          </a>
+                        )}
                       </div>
                     </Col>
                     <Col md={8} className="ColRight">
@@ -708,38 +886,46 @@ const ResumeComponent = () => {
                       <h6 className="empTitle">{selectedResume.title}</h6>
                       <div className="resumeMiniContainer">
                         <h5>Summary</h5>
-                        <p>{selectedResume.summary}</p>
+                        <p>{selectedResume.summary || "No summary provided"}</p>
                       </div>
 
                       <div className="resumeMiniContainer">
                         <h5>Experience</h5>
-                        {selectedResume.experience?.map((experience, index) => (
-                          <div key={index} className="experience-item">
-                            <h6>
-                              {experience.job_title} at {experience.company}
-                            </h6>
-                            <span className="date-range">
-                              {experience.start_date} to{" "}
-                              {experience.end_date || "Present"}
-                            </span>
-                            <p>{experience.description}</p>
-                          </div>
-                        ))}
+                        {selectedResume.experience?.length > 0 ? (
+                          selectedResume.experience.map((experience, index) => (
+                            <div key={index} className="experience-item">
+                              <h6>
+                                {experience.job_title} at {experience.company}
+                              </h6>
+                              <span className="date-range">
+                                {experience.start_date} to{" "}
+                                {experience.end_date || "Present"}
+                              </span>
+                              <p>{experience.description}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No experience added</p>
+                        )}
                       </div>
                       <div className="resumeMiniContainer">
                         <h5>Projects</h5>
-                        {selectedResume.projects?.map((project, index) => (
-                          <div key={index} className="project-item">
-                            <h6>{project.name}</h6>
-                            <p>{project.description}</p>
-                          </div>
-                        ))}
+                        {selectedResume.projects?.length > 0 ? (
+                          selectedResume.projects.map((project, index) => (
+                            <div key={index} className="project-item">
+                              <h6>{project.name}</h6>
+                              <p>{project.description}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No projects added</p>
+                        )}
                       </div>
                     </Col>
                   </Row>
                 </Fragment>
               ) : (
-                <div className="no-data">
+                <div className="no-data text-center py-5">
                   <p>Select a resume to view details</p>
                 </div>
               )}
@@ -749,9 +935,9 @@ const ResumeComponent = () => {
       </div>
 
       {!loading && resumeData.length === 0 && (
-        <div className="noData">
+        <div className="noData text-center py-5">
           <h6>
-            No Data Found! Click "Add Resume" to create your first resume.
+            No resumes found! Click "Add Resume" to create your first resume.
           </h6>
         </div>
       )}
@@ -767,6 +953,7 @@ const ResumeComponent = () => {
               value={newSaveResume.title}
               onChange={handleInputChange}
               invalid={!!errors.title}
+              placeholder="e.g., Senior Developer Resume"
             />
             <FormFeedback>{errors.title}</FormFeedback>
           </Col>
@@ -774,6 +961,7 @@ const ResumeComponent = () => {
             <span
               onClick={toogleResume}
               style={{ cursor: "pointer", fontSize: "24px" }}
+              className="text-muted"
             >
               <i className="fa-solid fa-xmark"></i>
             </span>
@@ -820,7 +1008,7 @@ const ResumeComponent = () => {
                 name="email"
                 value={newSaveResume.email}
                 onChange={handleInputChange}
-                placeholder="Email"
+                placeholder="your.email@example.com"
                 invalid={!!errors.email}
               />
               <FormFeedback>{errors.email}</FormFeedback>
@@ -831,7 +1019,7 @@ const ResumeComponent = () => {
                 name="phone"
                 value={newSaveResume.phone}
                 onChange={handleInputChange}
-                placeholder="Phone"
+                placeholder="+1 (555) 123-4567"
                 invalid={!!errors.phone}
               />
               <FormFeedback>{errors.phone}</FormFeedback>
@@ -879,6 +1067,11 @@ const ResumeComponent = () => {
                     placeholder="Add a language"
                     value={newLanguageInput}
                     onChange={(e) => setNewLanguageInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddLanguage();
+                      }
+                    }}
                   />
                 </Col>
                 <Col md="2" className="colPadding">
@@ -904,6 +1097,7 @@ const ResumeComponent = () => {
                           onChange={(e) =>
                             handleUpdateLanguage(idx, e.target.value)
                           }
+                          placeholder="Language"
                         />
                       </Col>
                       <Col md="2">
@@ -929,6 +1123,11 @@ const ResumeComponent = () => {
                     placeholder="Add a Skill"
                     value={newSkillInput}
                     onChange={(e) => setNewSkillInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddSkill();
+                      }
+                    }}
                   />
                 </Col>
                 <Col md="2" className="colPadding">
@@ -954,6 +1153,7 @@ const ResumeComponent = () => {
                           onChange={(e) =>
                             handleUpdateSkill(idx, e.target.value)
                           }
+                          placeholder="Skill"
                         />
                       </Col>
                       <Col md="2">
@@ -973,19 +1173,19 @@ const ResumeComponent = () => {
             <div className="resumeMiniContainer links">
               <h6>Links</h6>
               <Input
-                placeholder="Linkedin"
+                placeholder="LinkedIn URL"
                 name="linkedin"
                 value={newSaveResume.linkedin}
                 onChange={handleInputChange}
               />
               <Input
-                placeholder="Github"
+                placeholder="GitHub URL"
                 name="github"
                 value={newSaveResume.github}
                 onChange={handleInputChange}
               />
               <Input
-                placeholder="Website"
+                placeholder="Website URL"
                 name="website"
                 value={newSaveResume.website}
                 onChange={handleInputChange}
@@ -1010,7 +1210,7 @@ const ResumeComponent = () => {
             <div className="resumeMiniContainer">
               <h6>Summary</h6>
               <Input
-                placeholder="Professional summary"
+                placeholder="Professional summary about your experience and skills..."
                 type="textarea"
                 name="summary"
                 value={newSaveResume.summary}
@@ -1290,7 +1490,7 @@ const ResumeComponent = () => {
             </div>
 
             <div style={{ textAlign: "end", marginTop: "20px" }}>
-              <Button color="success" onClick={SwitchAddEdit}>
+              <Button color="success" onClick={SwitchAddEdit} size="lg">
                 {isEditMode ? "Update Resume" : "Save Resume"}
               </Button>
             </div>
@@ -1298,7 +1498,7 @@ const ResumeComponent = () => {
         </Row>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Single Delete Confirmation Modal */}
       <Modal
         isOpen={deleteModal}
         toggle={() => setDeleteModal(!deleteModal)}
@@ -1345,6 +1545,60 @@ const ResumeComponent = () => {
             color="secondary"
             style={{ minWidth: "100px", fontWeight: "500" }}
             onClick={() => setDeleteModal(false)}
+          >
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* Multiple Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteMultipleModal}
+        toggle={() => setDeleteMultipleModal(false)}
+        centered
+        style={{ borderRadius: "12px" }}
+      >
+        <ModalHeader
+          toggle={() => setDeleteMultipleModal(false)}
+          style={{
+            borderBottom: "none",
+            fontWeight: "600",
+            fontSize: "1.25rem",
+            padding: "1.2rem 1.5rem",
+          }}
+        >
+          Confirm Multiple Delete
+        </ModalHeader>
+        <ModalBody
+          style={{
+            padding: "1rem 1.5rem",
+            textAlign: "center",
+            fontSize: "18px",
+            color: "#555",
+          }}
+        >
+          Are you sure you want to delete {selectedResumes.length} selected
+          resume(s)? This action cannot be undone.
+        </ModalBody>
+        <ModalFooter
+          style={{
+            borderTop: "none",
+            padding: "1rem 1.5rem",
+            gap: "0.5rem",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            color="danger"
+            style={{ minWidth: "100px", fontWeight: "500" }}
+            onClick={handleDeleteMultipleResumes}
+          >
+            Delete All
+          </Button>
+          <Button
+            color="secondary"
+            style={{ minWidth: "100px", fontWeight: "500" }}
+            onClick={() => setDeleteMultipleModal(false)}
           >
             Cancel
           </Button>
