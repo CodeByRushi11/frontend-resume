@@ -82,5 +82,5 @@ const WallClockUI = () => {
     </div>
   );
 };
-
+//MAKe mobile resposive
 export default WallClockUI;

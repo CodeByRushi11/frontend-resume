@@ -256,5 +256,6 @@ const Layout = () => {
     </div>
   );
 };
+//MAKe mobile resposive
 
 export default Layout;
